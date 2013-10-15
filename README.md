@@ -10,3 +10,5 @@ A PiePiece can be select via code or by touch.
 
 Feel free to use!
 If you have any improvment, please don't be shy :)
+
+You can try out the views here: https://play.google.com/store/apps/details?id=com.my.customviewexamples
