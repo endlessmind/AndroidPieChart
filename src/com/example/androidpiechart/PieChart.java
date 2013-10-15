@@ -253,7 +253,7 @@ public class PieChart extends View {
         	paint.setAntiAlias(true);
         	paint.setTextSize(Dip(12));
         	canvas.rotate(90f, oval.centerX(), oval.centerY());
-        	canvas.drawText("Total: " + (Max -1), 0, this.getHeight()- 5, paint);
+        	canvas.drawText("Total: " + (Max ), 0, this.getHeight()- 5, paint);
         	canvas.rotate(-90f, oval.centerX() , oval.centerY());
         }
         CallDrawComp = true;
