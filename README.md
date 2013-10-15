@@ -9,3 +9,4 @@ This PieChart has selection mode.
 A PiePiece can be select via code or by touch.
 
 Feel free to use!
+If you have any improvment, please don't be shy :)
