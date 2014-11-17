@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -14,6 +15,7 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -28,6 +30,8 @@ public class PieChart extends View {
 	private String TAG = "PieChart";
 	private OnDrawCompleteListener mListener;
 	private boolean CallDrawComp = true;
+	private boolean mSortEnabled = false;
+	private boolean mShadowEnabled = false;
 	float center_x, center_y;
 
 	public PieChart(Context context, AttributeSet attrs, int defStyle) {
@@ -55,6 +59,15 @@ public class PieChart extends View {
 		return this.Max;
 	}
 	
+	public boolean getIsSortingEnabled() {
+		return mSortEnabled;
+	}
+	
+	public void setIsSortingEnabled(boolean value) {
+		mSortEnabled = value;
+		invalidate();
+	}
+	
 	public void setOnDrawCompleteListener(OnDrawCompleteListener listener) {
 		this.mListener = listener;
 	}
@@ -65,6 +78,12 @@ public class PieChart extends View {
 	
 	public void addPiece(PiePiece value) {
 		pieces.add(value);
+		
+		int maxValue = 0;
+		for (PiePiece p : pieces) {
+			maxValue += p.value;
+		}
+		setMax(maxValue);
 		invalidate();
 	}
 	
@@ -75,6 +94,15 @@ public class PieChart extends View {
 	public void clearPieces() {
 		this.pieces.clear();
 		//invalidate();
+	}
+	
+	public boolean getHasShadow() {
+		return mShadowEnabled;
+	}
+	
+	public void setHasShadow(boolean value) {
+		mShadowEnabled = value;
+		invalidate();
 	}
 	
 	public class PieceSorter implements Comparator<PiePiece> {
@@ -109,11 +137,21 @@ public class PieChart extends View {
 	     color =Color.argb(225, r, g, b);
 	    colorCounter += 0.773;
 	  }
+	  
+	  private void setShadowToPaint(Paint p) {
+      	if (mShadowEnabled) {
+    		if (Build.VERSION.SDK_INT >= 11) { //Disable hardware acceleration to enable drop shadow on Android 3.0+
+    			this.setLayerType(View.LAYER_TYPE_SOFTWARE, p);
+    		}
+			p.setShadowLayer(3.0f, -3.0f, 2.0f, Color.BLACK);
+    	}
+	  }
 	
 	@Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //Sort the list
+        //Sort the list if enabled
+        if (mSortEnabled)
 		Collections.sort(pieces, new PieceSorter());
 		//Reset color counter, colors should not change when we invalidate
 		colorCounter = 0;
@@ -143,7 +181,7 @@ public class PieChart extends View {
         //Counters
         float lastAng = 0;
         int count = 0;
-        //Draw each piece and leave about 1 degree angle between each piece.
+        //Draw each piece and leave about 0.5 degree angle between each piece.
         for (PiePiece p : pieces) {
            
             count++;
@@ -163,15 +201,12 @@ public class PieChart extends View {
             p.color = color;
             pieces.set(index, p);
             //Calculate angle
-        	float angle = Math.round(((double)360/(double)Max) *p.value);
+        	float angle = ((float)(360)/(float)Max) *p.value; 
         	//Leave space
-        	if (count != pieces.size() -1) {
-        		angle -= 1;
-        	} else {
-        		angle -= 1;
-        	}
-        	
-        	//Draw piece
+        	angle -= 0.5f;
+
+        	//Draw piece and shadow
+        	setShadowToPaint(paint);
         	canvas.drawArc(oval, lastAng, angle, false, paint);
         	//More paint
     		paint = new Paint();
@@ -179,7 +214,7 @@ public class PieChart extends View {
             paint.setStyle(Paint.Style.FILL);
             paint.setStrokeWidth(Dip(1));
             paint.setAntiAlias(true);
-            paint.setTextSize(Dip(8));
+            paint.setTextSize(Dip(9));
             
             //Create the text that shown on the inside of each piece
             String Text = Math.round(((double)p.value / (double)Max) * (double)100) + "%";
@@ -200,7 +235,8 @@ public class PieChart extends View {
                 paint.setStyle(Paint.Style.STROKE);
                 paint.setStrokeWidth(Dip(2));
                 paint.setAntiAlias(true);
-                //Draw selected indicator
+                //Draw selected indicator with shadow?
+                setShadowToPaint(paint);
                 canvas.drawArc(ovalSelected, lastAng, angle, false, paint);
                 //More Paint
         		paint = new Paint();
@@ -233,7 +269,7 @@ public class PieChart extends View {
         	}
         	
         	//Add the last angle to the total angle, so the next piece is draw after the current
-        	lastAng += angle  + 1;
+        	lastAng += angle  + 0.5f;
 
         	
         	

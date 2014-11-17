@@ -2,11 +2,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:weightSum="10"
     tools:context=".MainActivity" >
 
     <com.example.androidpiechart.PieChart
         android:id="@+id/pieChart1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:layout_weight="8" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:weightSum="2" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" >
+
+            <CheckBox
+                android:id="@+id/chbSort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sort" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" >
+
+            <CheckBox
+                android:id="@+id/chbShadow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Shadow" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnGenerate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Generate new pieces"
+        android:layout_marginBottom="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:layout_weight="1" />
 
 </LinearLayout>
